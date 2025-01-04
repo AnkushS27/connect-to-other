@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -10,6 +11,8 @@ const Register = () => {
         interests: ''
     });
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleChange = (e) => {
         setFormData({
@@ -27,7 +30,31 @@ const Register = () => {
             return;
         }
 
-        // logic to handle submitting the form
+        try {
+            const response = await fetch('http://localhost:5000/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: formData.username,
+                    email: formData.email,
+                    password: formData.password,
+                    interests: formData.interests.split(',').map(interest => interest.trim())
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Error registering user');
+            }
+
+            login(data.token, data.userId);
+            navigate('/');
+        } catch (error) {
+            setError(error.message);
+        }
     };
 
     return (
