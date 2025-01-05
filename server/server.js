@@ -34,6 +34,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Something went wrong!' });
 });
 
-app.get('/', (req, res) => {
-    res.send('API Running');
+app.use('/', (req, res) => {
+    res.json({message: 'Backend Server is running'});
 });
