@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
+import { Analytics } from "@vercel/analytics/react"
 
 const PrivateRoute = ({ children }) => {
     const { user } = useAuth();
@@ -14,6 +15,7 @@ const PrivateRoute = ({ children }) => {
 const App = () => {
     return (
         <AuthProvider>
+            <Analytics />
             <Router>
                 <div className="min-h-screen bg-gray-100">
                     <Navbar />

@@ -11,50 +11,40 @@ const Home = () => {
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchFriends();
-        fetchRecommendations();
-    }, []);
-
-    const fetchFriends = async () => {
+    const fetchData = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friends`, {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-            const data = await response.json();
-            setFriends(data.friends);
-            setFriendRequests(data.friendRequests);
-        } catch (error) {
-            console.error('Error fetching friends:', error);
-        }
-    };
+            const [friendsResponse, recommendationsResponse] = await Promise.all([
+                fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friends`, {
+                    headers: { 'Authorization': `Bearer ${user.token}` }
+                }),
+                fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/recommendations`, {
+                    headers: { 'Authorization': `Bearer ${user.token}` }
+                })
+            ]);
 
-    const fetchRecommendations = async () => {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/recommendations`, {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-            const data = await response.json();
-            setRecommendations(data);
+            const friendsData = await friendsResponse.json();
+            const recommendationsData = await recommendationsResponse.json();
+
+            setFriends(friendsData.friends);
+            setFriendRequests(friendsData.friendRequests);
+            setRecommendations(recommendationsData);
         } catch (error) {
-            console.error('Error fetching recommendations:', error);
+            console.error('Error fetching data:', error);
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchData();
+    }, [user.token]);
 
     const handleSearch = async () => {
         try {
             const response = await fetch(
                 `${process.env.REACT_APP_BACKEND_API_POINT}/api/users/search?q=${searchQuery}`,
                 {
-                    headers: {
-                        'Authorization': `Bearer ${user.token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${user.token}` }
                 }
             );
             const data = await response.json();
@@ -68,9 +58,7 @@ const Home = () => {
         try {
             await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friend-request/${userId}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
+                headers: { 'Authorization': `Bearer ${user.token}` }
             });
             setSearchResults(searchResults.filter(user => user._id !== userId));
         } catch (error) {
@@ -82,11 +70,9 @@ const Home = () => {
         try {
             await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/accept-request/${userId}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
+                headers: { 'Authorization': `Bearer ${user.token}` }
             });
-            await fetchFriends();
+            await fetchData();
         } catch (error) {
             console.error('Error accepting friend request:', error);
         }
@@ -96,11 +82,9 @@ const Home = () => {
         try {
             await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friends/${userId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
+                headers: { 'Authorization': `Bearer ${user.token}` }
             });
-            await fetchFriends();
+            await fetchData();
         } catch (error) {
             console.error('Error removing friend:', error);
         }
@@ -171,7 +155,7 @@ const Home = () => {
             <div className="bg-white p-6 rounded-lg shadow">
                 <h2 className="text-xl font-semibold mb-4">Friends</h2>
                 <div className="space-y-2">
-                    {friends && friends.map(friend => (
+                    {friends.map(friend => (
                         <div key={friend._id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                             <span>{friend.username}</span>
                             <button
@@ -189,8 +173,11 @@ const Home = () => {
             <div className="bg-white p-6 rounded-lg shadow">
                 <h2 className="text-xl font-semibold mb-4">Recommended Friends</h2>
                 <div className="space-y-2">
-                    {recommendations && recommendations.map(recommendation => (
-                        <div key={recommendation._id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    {recommendations.map(recommendation => (
+                        <div
+                            key={recommendation._id}
+                            className="flex justify-between items-center p-2 bg-gray-50 rounded"
+                        >
                             <span>{recommendation.username}</span>
                             <button
                                 onClick={() => sendFriendRequest(recommendation._id)}
