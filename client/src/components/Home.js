@@ -18,7 +18,7 @@ const Home = () => {
 
     const fetchFriends = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/users/friends', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friends`, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`
                 }
@@ -33,7 +33,7 @@ const Home = () => {
 
     const fetchRecommendations = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/users/recommendations', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/recommendations`, {
                 headers: {
                     'Authorization': `Bearer ${user.token}`
                 }
@@ -50,7 +50,7 @@ const Home = () => {
     const handleSearch = async () => {
         try {
             const response = await fetch(
-                `http://localhost:5000/api/users/search?q=${searchQuery}`,
+                `${process.env.REACT_APP_BACKEND_API_POINT}/api/users/search?q=${searchQuery}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${user.token}`
@@ -66,7 +66,7 @@ const Home = () => {
 
     const sendFriendRequest = async (userId) => {
         try {
-            await fetch(`http://localhost:5000/api/users/friend-request/${userId}`, {
+            await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friend-request/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${user.token}`
@@ -80,7 +80,7 @@ const Home = () => {
 
     const acceptFriendRequest = async (userId) => {
         try {
-            await fetch(`http://localhost:5000/api/users/accept-request/${userId}`, {
+            await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/accept-request/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${user.token}`
@@ -94,7 +94,7 @@ const Home = () => {
 
     const removeFriend = async (userId) => {
         try {
-            await fetch(`http://localhost:5000/api/users/friends/${userId}`, {
+            await fetch(`${process.env.REACT_APP_BACKEND_API_POINT}/api/users/friends/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user.token}`
@@ -130,7 +130,7 @@ const Home = () => {
                     </button>
                 </div>
 
-                {searchResults.length > 0 && (
+                {searchResults && searchResults.length > 0 && (
                     <div className="mt-4 space-y-2">
                         {searchResults.map(result => (
                             <div key={result._id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
@@ -148,7 +148,7 @@ const Home = () => {
             </div>
 
             {/* Friend Requests Section */}
-            {friendRequests.length > 0 && (
+            {friendRequests && friendRequests.length > 0 && (
                 <div className="bg-white p-6 rounded-lg shadow">
                     <h2 className="text-xl font-semibold mb-4">Friend Requests</h2>
                     <div className="space-y-2">
@@ -171,7 +171,7 @@ const Home = () => {
             <div className="bg-white p-6 rounded-lg shadow">
                 <h2 className="text-xl font-semibold mb-4">Friends</h2>
                 <div className="space-y-2">
-                    {friends.map(friend => (
+                    {friends && friends.map(friend => (
                         <div key={friend._id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                             <span>{friend.username}</span>
                             <button
@@ -189,7 +189,7 @@ const Home = () => {
             <div className="bg-white p-6 rounded-lg shadow">
                 <h2 className="text-xl font-semibold mb-4">Recommended Friends</h2>
                 <div className="space-y-2">
-                    {recommendations.map(recommendation => (
+                    {recommendations && recommendations.map(recommendation => (
                         <div key={recommendation._id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                             <span>{recommendation.username}</span>
                             <button
