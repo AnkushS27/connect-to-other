@@ -7,6 +7,14 @@ const userRoutes = require('./routes/users');
 
 const app = express();
 
+// Specific CORS configuration for the frontend
+app.use(cors({
+    origin: process.env.CLIENT_URL, 
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
+
 // Middleware
 app.use(cors());
 app.use(express.json());
