@@ -1,9 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
+import Home from './components/Home';
 import Navbar from './components/Navbar';
+
+const PrivateRoute = ({ children }) => {
+    const { user } = useAuth();
+    return user ? children : <Navigate to="/login" />;
+};
 
 const App = () => {
     return (
@@ -15,6 +21,14 @@ const App = () => {
                         <Routes>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
+                            <Route 
+                                path="/" 
+                                element={
+                                    <PrivateRoute>
+                                        <Home />
+                                    </PrivateRoute>
+                                } 
+                            />
                         </Routes>
                     </div>
                 </div>

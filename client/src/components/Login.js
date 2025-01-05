@@ -52,6 +52,7 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-2 border rounded"
+                            autoComplete="on"
                             required
                         />
                     </div>
@@ -62,6 +63,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full p-2 border rounded"
+                            autoComplete="on"
                             required
                         />
                     </div>
